@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Crying Diary</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px 18px;
+  background: #111116;
+  color: #f1e9eb;
+  font-family: Georgia, serif;
+}
+header { text-align: center; padding: 30px 0; }
+h1 { font-size: 32px; font-weight: normal; }
+.subtitle { color: #b9a5ad; font-style: italic; }
+main { max-width: 600px; margin: auto; }
+label { display: block; margin: 18px 0 8px; }
+input, textarea {
+  width: 100%;
+  padding: 14px;
+  background: #201d25;
+  color: white;
+  border: 1px solid #51404b;
+  border-radius: 8px;
+  font: 16px Georgia, serif;
+}
+textarea { min-height: 180px; resize: vertical; }
+button {
+  margin-top: 14px;
+  padding: 13px 18px;
+  background: #9b7186;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+.entry {
+  background: #201d25;
+  border: 1px solid #51404b;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.entry small { color: #c5a9b7; }
+#saved { margin-top: 30px; }
+footer {
+  text-align: center;
+  color: #9e8c96;
+  margin: 40px 0 20px;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:36px">🌧️</div>
+  <h1>The Crying Diary</h1>
+  <p class="subtitle">A private space for your thoughts, feelings and unsent words.</p>
+</header>
+<main>
+  <p>You don't have to pretend you're okay here.</p>
+  <label for="mood">What are you feeling today?</label>
+  <input id="mood" placeholder="Sad, numb, hopeful, overwhelmed...">
+  <label for="entry">Let it out. Write freely.</label>
+  <textarea id="entry" placeholder="Dear diary..."></textarea>
+  <button onclick="saveEntry()">Save my feelings</button>
+  <button onclick="clearForm()" style="background:#51404b">Start a new entry</button>
+  <section id="saved">
+    <h2>Your diary entries</h2>
+    <div id="entries"></div>
+  </section>
+</main>
+<footer>Your feelings are allowed to exist. 🖤</footer>
+<script>
+function loadEntries() {
+  const entries = JSON.parse(localStorage.getItem('cryingDiary') || '[]');
+  document.getElementById('entries').innerHTML = '';
+  entries.slice().reverse().forEach(item => {
+    const card = document.createElement('article');
+    card.className = 'entry';
+    const date = document.createElement('small');
+    date.textContent = item.date + ' · ' + item.mood;
+    const words = document.createElement('p');
+    words.textContent = item.text;
+    card.append(date, words);
+    document.getElementById('entries').appendChild(card);
+  });
+}
+function saveEntry() {
+  const mood = document.getElementById('mood').value.trim() || 'Unlabelled feelings';
+  const text = document.getElementById('entry').value.trim();
+  if (!text) {
+    alert('Write a little or a lot. Your words matter.');
+    return;
+  }
+  const entries = JSON.parse(localStorage.getItem('cryingDiary') || '[]');
+  entries.push({mood, text, date: new Date().toLocaleString()});
+  localStorage.setItem('cryingDiary', JSON.stringify(entries));
+  document.getElementById('entry').value = '';
+  document.getElementById('mood').value = '';
+  loadEntries();
+  alert('Your entry has been saved on this browser.');
+}
+function clearForm() {
+  document.getElementById('mood').value = '';
+  document.getElementById('entry').value = '';
+}
+loadEntries();
+</script>
+</body>
+</html>
